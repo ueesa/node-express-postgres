@@ -21,7 +21,25 @@ router.post('/', function (req, res, next) {
         res.render("signup", {
           title: "Sign up",
           errorMessage: ["このユーザ名は既に使われています"],
-        })
+        }) 
+      } else if (password === repassword) {
+        knex("users")
+          .insert({name: username, password: password})
+          .then(function () {
+            res.redirect("/");
+          })
+          .catch(function (err) {
+            console.error(err);
+            res.render("signup", {
+              title: "Sign up",
+              errorMessage: [err.sqlMessage],
+            });
+          });
+      } else {
+        res.render("signup", {
+          title: "Sign up",
+          errorMessage: ["パスワードが一致しません"],
+        });
       }
     })
     .catch(function (err) {
